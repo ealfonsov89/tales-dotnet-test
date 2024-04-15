@@ -1,4 +1,6 @@
+using Customer.DataTransferObjects;
 using Customer.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace Customer.Controllers;
 
@@ -14,11 +16,13 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet("{page:int}/{pageSize:int}")]
-    public List<Models.Customer> Get(int page, int pageSize)
+    [Authorize]
+    public List<CustomerDto> Get(int page, int pageSize)
     {
         return _customerService.GetCustomers(page, pageSize);
     }
     [HttpPost]
+    [Authorize]
     public IActionResult Post(Models.Customer customer)
     {
         try
@@ -32,6 +36,7 @@ public class CustomerController : ControllerBase
         }
     }
     [HttpPut]
+    [Authorize]
     public IActionResult IActionResult(Models.Customer customer)
     {
         try
@@ -45,6 +50,7 @@ public class CustomerController : ControllerBase
         }
     }
     [HttpDelete("{id}")]
+    [Authorize]
     public IActionResult Delete(int id)
     {
         try

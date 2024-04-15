@@ -2,6 +2,7 @@
 namespace Customer.Services;
 
 using Customer.Data;
+using Customer.DataTransferObjects;
 using Customer.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,9 +14,15 @@ public class CustomerService
         _customerContext = customerContext;
     }
 
-    public List<Customer> GetCustomers(int page, int pageSize)
+    public List<CustomerDto> GetCustomers(int page, int pageSize)
     {
-        return _customerContext.Customers.AsNoTracking().Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        return [.. _customerContext.Customers.AsNoTracking().Skip((page - 1) * pageSize).Take(pageSize).Select(customer => new CustomerDto
+        {
+            Id = customer.Id,
+            First = customer.First,
+            Last = customer.Last,
+            CreatedAt = customer.CreatedAt
+        })];
     }
     public void EditCustomer(Customer customer)
     {
@@ -40,10 +47,10 @@ public class CustomerService
     }
     public void DeleteCustomer(int id)
     {
-        var customerTodelete = _customerContext.Customers.Find(id);
-        if (customerTodelete is not null)
+        var customerToDelete = _customerContext.Customers.Find(id);
+        if (customerToDelete is not null)
         {
-            _customerContext.Customers.Remove(customerTodelete);
+            _customerContext.Customers.Remove(customerToDelete);
             _customerContext.SaveChanges();
         }
     }
